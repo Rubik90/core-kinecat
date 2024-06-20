@@ -1,5 +1,7 @@
 services:
   cheshire-cat-core:
+    build:
+      context: ./core
     image: ghcr.io/cheshire-cat-ai/core:latest
     container_name: cheshire_cat_core
     depends_on:
@@ -34,7 +36,6 @@ services:
     container_name: cheshire_cat_vector_memory
     environment:
       LOG_LEVEL: ${LOG_LEVEL:-WARNING}
-      WATCHFILES_FORCE_POLLING: "true"
     expose:
       - ${QDRANT_PORT:-6333}
     volumes:
@@ -42,11 +43,10 @@ services:
     restart: unless-stopped
 
   ollama:
-    image: ollama/ollama:0.1..44
+    image: ollama/ollama:0.1.44
     container_name: ollama_cat
     restart: unless-stopped
     environment:
-      WATCHFILES_FORCE_POLLING: "true"
       OLLAMA_HOST: "${OLLAMA_HOST:-0.0.0.0}:${OLLAMA_PORT-11434}"
       OLLAMA_DEBUG: ${OLLAMA_DEBUG:-false}
       OLLAMA_FLASH_ATTENTION: ${OLLAMA_FLASH_ATTENTION:-false}
