@@ -39,3 +39,5 @@ plugin_folder
 # cache embedder
 core/local_cache/*
 
+ollama/
+core/cat/data/models/fast_embed/

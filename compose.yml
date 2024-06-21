@@ -2,33 +2,39 @@ services:
   cheshire-cat-core:
     build:
       context: ./core
-    image: ghcr.io/cheshire-cat-ai/core:latest
+    # image: ghcr.io/cheshire-cat-ai/core:latest
     container_name: cheshire_cat_core
     depends_on:
       - cheshire-cat-vector-memory
       - ollama
     environment:
-      PYTHONUNBUFFERED: "1"
-      WATCHFILES_FORCE_POLLING: "true"
+      # PYTHONUNBUFFERED: "1"
+      # WATCHFILES_FORCE_POLLING: "true"
       CORE_HOST: ${CORE_HOST:-localhost}
       CORE_PORT: ${CORE_PORT:-1865}
       QDRANT_HOST: ${QDRANT_HOST:-cheshire_cat_vector_memory}
       QDRANT_PORT: ${QDRANT_PORT:-6333}
-      CORE_USE_SECURE_PROTOCOLS: ${CORE_USE_SECURE_PROTOCOLS:-false}
-      API_KEY: ${API_KEY:-}
-      LOG_LEVEL: ${LOG_LEVEL:-WARNING}
-      DEBUG: ${DEBUG:-false}
-      SAVE_MEMORY_SNAPSHOTS: ${SAVE_MEMORY_SNAPSHOTS:-false}
+      # CORE_USE_SECURE_PROTOCOLS: ${CORE_USE_SECURE_PROTOCOLS:-false}
+      # API_KEY: ${API_KEY:-}
+      # LOG_LEVEL: ${LOG_LEVEL:-WARNING}
+      # DEBUG: ${DEBUG:-false}
+      # SAVE_MEMORY_SNAPSHOTS: ${SAVE_MEMORY_SNAPSHOTS:-false}
     ports:
       - "${CORE_PORT:-1865}:80"
     # This add an entry to /etc/hosts file in the container mapping host.docker.internal to the host machine IP addr, allowing the container to access services running on the host, not only on Win and Mac but also Linux. 
     # See https://docs.docker.com/desktop/networking/#i-want-to-connect-from-a-container-to-a-service-on-the-host and https://docs.docker.com/reference/cli/docker/container/run/#add-host
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    # volumes:
+    #   - ./cat/static:/app/cat/static
+    #   - ./cat/plugins:/app/cat/plugins
+    #   - ./cat/data:/app/cat/data
     volumes:
-      - ./cat/static:/app/cat/static
-      - ./cat/plugins:/app/cat/plugins
-      - ./cat/data:/app/cat/data
+      - ./core:/app
+    command:
+      - python
+      - "-m"
+      - "cat.main"
     restart: unless-stopped
 
   cheshire-cat-vector-memory:
@@ -39,7 +45,7 @@ services:
     expose:
       - ${QDRANT_PORT:-6333}
     volumes:
-      - ./cat/long_term_memory/vector:/qdrant/storage
+      - ./core/cat/long_term_memory/vector:/qdrant/storage
     restart: unless-stopped
 
   ollama:
@@ -57,10 +63,10 @@ services:
       - ${OLLAMA_PORT:-11434}
     volumes:
       - ./ollama:/root/.ollama
-#    deploy:
-#      resources:
-#        reservations:
-#          devices:
-#            - driver: nvidia
-#              count: all
-#              capabilities: [ gpu ]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [ gpu ]
