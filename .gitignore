@@ -39,3 +39,6 @@ core/local_cache/*
 
 ollama/
 core/cat/data/models/fast_embed/
+core/cat/plugins/nl2gherkin/.github/workflows/main.yml
+core/cat/plugins/nl2gherkin/.github/ISSUE_TEMPLATE/feature_request.md
+core/cat/plugins/nl2gherkin/.github/ISSUE_TEMPLATE/bug_report.md
