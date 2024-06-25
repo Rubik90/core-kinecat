@@ -98,7 +98,10 @@ def convert_row_to_gherkin(row: Dict, cat) -> str:
                         And 
                         And 
                         And 
-                        Then 
+                        Then
+                        And 
+                        And 
+                        And  
             """
     try:
         refined_gherkin = cat.llm(prompt)
