@@ -166,7 +166,23 @@ def do_convert_nl_to_gherkin(excel_file_name: str, cat) -> str:
                          f"Trigger: {trigger}\n"
                          f"Actuation: {actuation}")
 
-            prompt = f"Generate a Gherkin scenario based on the following input:\n{llm_input}\nGherkin format (DO NOT ADD ANY OTHER INFORMATION BESIDES THE CONTENT OF THE GHERKIN SYNTAX):\n"
+            prompt = f"""Generate a Gherkin scenario based on the following input:{llm_input}
+
+1. Only provide the Gherkin format scenario.
+2. The output should start with 'Feature:'.
+3. Include only the Gherkin scenario steps without any additional text.
+4. Do not include phrases like 'Here is the generated Gherkin scenario:', 'Here is the Gherkin scenario', 'Output:', 'Result:', or any other non-Gherkin text.
+5. Ensure that the output is purely in Gherkin format and nothing else.
+
+Example of the expected format:
+Feature: User Login and Dashboard Navigation
+  Scenario: User logs in and navigates to the dashboard
+    Given the user is on the login page
+    When the user enters valid credentials
+    And ...
+    Then the user should be redirected to the dashboard
+    And..."""
+
             llm_response = cat.llm(prompt)
 
             if llm_response:

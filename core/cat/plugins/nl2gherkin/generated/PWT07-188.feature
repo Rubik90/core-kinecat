@@ -1,14 +1,23 @@
-Feature: Engine Cooling Fan Control
-  As a vehicle electronics system, I want to ensure that the cooling fans turn off when the ignition is switched back on and the engine coolant temperature falls below a certain threshold or after a specified time period.
+Feature: PWT07-246/477 Test Scenario
+  Scenario: Ignition On and Off, Head Coolant Temp Sensor Test
+    Given VehState.INIgnitionStatus is 5 (Ignition)
+    And nEngine is greater than 0
+    And no DTC to be logged on ECM
 
-Scenario: Ignition On, Coolant Temperature High, then Switched Off
-  Given the ignition status is "on" and the engine is running
-  And the head coolant temperature sensor reading is greater than 108 degrees Celsius
-  When I set the accessory switch to off and keep the head coolant temperature sensor reading high for 320 seconds
-  Then the cooling fan relay low side should be off and the cooling fan relay high speed should be on
+    When Head Coolant Temp Sensor (I_A_CTS1) is set to more than 108 degC
+    Then pass criteria 1 is met
 
-Scenario: Ignition Off, Coolant Temperature High, then Switched On
-  Given the ignition status is "off"
-  And the head coolant temperature sensor reading is greater than 98.5 degrees Celsius
-  When I set the ignition status to "on" and keep the head coolant temperature sensor reading high for 320 seconds
-  Then the cooling fan relay low side should be off and the cooling fan relay high speed should be on
+    And B_KL15 is set to 0 (Accessory)
+    And keep Head Coolant Temp Sensor (I_A_CTS1) at more than 108 degC
+
+    When B_KL15 is set to 1 (Ignition without cranking) after 320 seconds
+    Then pass criteria 2 is met
+
+    Given NIgnitionStatus is 0
+
+    When NIgnitionStatus is 5 or TCoolant is less than 98.5 Deg or After Run Timer is 320 seconds
+    Then O_S_FAN1 is Off (12V) and O_S_FAN2 is On (0V)
+    And O_S_FAN1 is Off (12V) and O_S_FAN2 is Off (12V)
+
+    When rFan1ECM is set to 0%
+    Then ECM should not send any Speed request to ZC1 to turn on the HTR fan

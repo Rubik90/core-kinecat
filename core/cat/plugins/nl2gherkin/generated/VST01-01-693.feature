@@ -1,11 +1,8 @@
-Here is the Gherkin scenario:
-
 Feature: Ignition State Transition
-Scenario:
-Given the vehicle is in Ignition State 2
-And an Authorised key is present inside or outside the vehicle
-And the door is open
-And the LV Battery State of Charge is not 'Pre-UVP'
-And the Ethernet Status and ADI are stable and communicating
-When the above conditions are met
-Then the Ignition State shall transition to State 3
+  Scenario: Ignition State 2 to State 3 Triggered
+    Given the ignition state is 2
+    And the door is open (inside or outside)
+    And the battery state of charge is not "Pre-UVP"
+    And the Ethernet status and ADI are stable and communicating
+    When an authorized key is detected inside or outside the vehicle
+    Then the ignition state should transition to 3
